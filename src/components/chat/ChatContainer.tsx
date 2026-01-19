@@ -47,6 +47,8 @@ export function ChatContainer() {
         </p>
         <p>
           © 2026 Pierre Jourlin — <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Licence Apache 2.0</a>
+          {" "}•{" "}
+          <a href="https://github.com/jourlin/chatbot-webllm" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">GitHub</a>
         </p>
       </footer>
     </div>

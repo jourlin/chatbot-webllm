@@ -36,7 +36,7 @@ Le chatbot détecte automatiquement votre GPU et recommande le meilleur modèle 
 
 ```bash
 # Cloner le repo
-git clone https://github.com/VOTRE_USERNAME/chatbot-webllm.git
+git clone https://github.com/jourlin/chatbot-webllm.git
 cd chatbot-webllm
 
 # Installer les dépendances

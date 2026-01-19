@@ -4,10 +4,10 @@
 set -e
 
 # Configuration
-SSH_USER="doji1810"
-SSH_HOST="chaud.o2switch.net"
+SSH_USER="YOUR_SSH_USERNAME"
+SSH_HOST="YOUR_SSH_HOST"
 SSH_PORT="22"
-REMOTE_PATH="jourlin.com/chatbot1"
+REMOTE_PATH="YOUR_REMOTE_PATH"
 BUILD_DIR="dist"
 
 echo "🚀 Déploiement du chatbot WebLLM avec rsync..."
@@ -51,4 +51,4 @@ ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} "chmod -R 755 ${REMOTE_PATH}"
 
 echo ""
 echo "✅ Déploiement terminé avec succès!"
-echo "🌐 Votre chatbot est accessible à: https://jourlin.com/chatbot1"
+echo "🌐 Votre chatbot est accessible à: https://YOUR_DOMAIN/YOUR_PATH"

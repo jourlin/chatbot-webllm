@@ -26,6 +26,24 @@ if [ ! -d "${BUILD_DIR}" ]; then
     exit 1
 fi
 
+# Création du .htaccess pour les headers COOP/COEP (multi-threading WASM)
+echo "📝 Création du .htaccess..."
+cat > ${BUILD_DIR}/.htaccess << 'EOF'
+# Headers pour activer le multi-threading WASM (crossOriginIsolated)
+<IfModule mod_headers.c>
+    Header set Cross-Origin-Opener-Policy "same-origin"
+    Header set Cross-Origin-Embedder-Policy "credentialless"
+</IfModule>
+
+# Cache pour les assets statiques
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
+EOF
+
 # Vérification de la connexion SSH
 echo "🔍 Vérification de la connexion SSH..."
 if ! ssh -p ${SSH_PORT} -o ConnectTimeout=10 ${SSH_USER}@${SSH_HOST} "echo 'Connexion OK'" 2>/dev/null; then

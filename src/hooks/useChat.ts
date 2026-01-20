@@ -1,10 +1,14 @@
 import { useState, useCallback, useRef } from "react";
 import type { LoadingStatus, ChatMessage } from "@/lib/webllm-service";
 import { webLLMService } from "@/lib/webllm-service";
+import { transformersService } from "@/lib/transformers-service";
+
+export type BackendType = "webllm" | "transformers";
 
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [currentBackend, setCurrentBackend] = useState<BackendType | null>(null);
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>({
     progress: 0,
     text: "",
@@ -16,9 +20,14 @@ export function useChat() {
   const abortRef = useRef(false);
   const currentResponseRef = useRef("");
 
-  const initializeModel = useCallback(async (modelId?: string) => {
+  const initializeModel = useCallback(async (modelId?: string, backend: BackendType = "webllm") => {
     try {
-      await webLLMService.initialize(setLoadingStatus, modelId);
+      setCurrentBackend(backend);
+      if (backend === "transformers") {
+        await transformersService.initialize(setLoadingStatus, modelId);
+      } else {
+        await webLLMService.initialize(setLoadingStatus, modelId);
+      }
     } catch (error) {
       console.error("Erreur d'initialisation:", error);
     }
@@ -48,8 +57,11 @@ export function useChat() {
     abortRef.current = false;
     currentResponseRef.current = "";
 
+    // Choisir le bon service selon le backend
+    const service = currentBackend === "transformers" ? transformersService : webLLMService;
+
     try {
-      await webLLMService.generateResponse(
+      await service.generateResponse(
         [...messages, userMessage],
         (token) => {
           if (abortRef.current) return;
@@ -80,7 +92,7 @@ export function useChat() {
       });
       setIsGenerating(false);
     }
-  }, [messages, isGenerating, loadingStatus.isReady]);
+  }, [messages, isGenerating, loadingStatus.isReady, currentBackend]);
 
   const stopGeneration = useCallback(() => {
     abortRef.current = true;
@@ -89,13 +101,15 @@ export function useChat() {
 
   const clearChat = useCallback(async () => {
     setMessages([]);
-    await webLLMService.resetChat();
-  }, []);
+    const service = currentBackend === "transformers" ? transformersService : webLLMService;
+    await service.resetChat();
+  }, [currentBackend]);
 
   return {
     messages,
     isGenerating,
     loadingStatus,
+    currentBackend,
     sendMessage,
     stopGeneration,
     clearChat,

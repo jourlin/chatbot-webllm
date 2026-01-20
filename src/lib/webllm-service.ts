@@ -20,8 +20,10 @@ export type ChatMessage = {
 // Modèles disponibles par ordre de puissance
 // On utilise q4f32 (float32) au lieu de q4f16 pour compatibilité avec GPU Intel/AMD intégrés
 export const AVAILABLE_MODELS = {
+  // Ultra-léger - fallback WASM/CPU (SwiftShader) - très lent mais fonctionne partout
+  wasm_tiny: "SmolLM2-135M-Instruct-q0f32-MLC",
   // Très léger - pour GPU très limités (f32 pour compatibilité)
-  tiny: "SmolLM2-135M-Instruct-q4f32_1-MLC",
+  tiny: "SmolLM2-135M-Instruct-q0f32-MLC",
   // Léger - pour GPU intégrés (Intel, AMD APU)
   small: "SmolLM2-360M-Instruct-q4f32_1-MLC",
   // Moyen - pour GPU dédiés entrée de gamme (f16 pour performance)

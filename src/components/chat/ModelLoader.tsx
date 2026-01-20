@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import type { LoadingStatus } from "@/lib/webllm-service";
+import { AVAILABLE_CPU_MODELS } from "@/lib/transformers-service";
 import { detectAllGPUs, getGPURecommendation, type AllGPUsInfo } from "@/lib/gpu-detect";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Sparkles, AlertCircle, Cpu, Monitor, Zap, Smartphone } from "lucide-react";
+import { Loader2, Sparkles, AlertCircle, Cpu, Monitor, Zap, Smartphone, HardDrive } from "lucide-react";
+import type { BackendType } from "@/hooks/useChat";
 
 interface ModelLoaderProps {
   status: LoadingStatus;
-  onLoad: (modelId: string) => void;
+  onLoad: (modelId: string, backend?: BackendType) => void;
 }
 
 export function ModelLoader({ status, onLoad }: ModelLoaderProps) {
@@ -31,8 +33,13 @@ export function ModelLoader({ status, onLoad }: ModelLoaderProps) {
 
   const handleLoad = () => {
     if (recommendation?.recommendedModel) {
-      onLoad(recommendation.recommendedModel);
+      onLoad(recommendation.recommendedModel, "webllm");
     }
+  };
+
+  const handleCpuFallback = () => {
+    // Utiliser Qwen1.5-0.5B-Chat qui est léger et capable
+    onLoad(AVAILABLE_CPU_MODELS.small, "transformers");
   };
 
   // Bloquer les clics à travers l'overlay
@@ -72,9 +79,21 @@ export function ModelLoader({ status, onLoad }: ModelLoaderProps) {
                 <p className="mt-2">Ou utilisez <strong>Google Chrome</strong> (meilleur support).</p>
                 <p>Vérifiez sur <a href="https://webgpureport.org" target="_blank" className="text-primary underline">webgpureport.org</a></p>
               </div>
-              <Button onClick={handleLoad} variant="outline">
-                Réessayer
-              </Button>
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 text-xs">
+                <p className="text-yellow-800 dark:text-yellow-200 mb-2">
+                  <strong>💡 Alternative disponible :</strong> Utilisez le mode CPU avec Transformers.js. 
+                  Plus lent mais fonctionne sans GPU.
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleLoad} variant="outline" className="flex-1">
+                  Réessayer GPU
+                </Button>
+                <Button onClick={handleCpuFallback} variant="secondary" className="flex-1">
+                  <HardDrive className="mr-2 h-4 w-4" />
+                  Mode CPU
+                </Button>
+              </div>
             </div>
           ) : status.isLoading ? (
             <div className="space-y-4">
@@ -201,21 +220,50 @@ export function ModelLoader({ status, onLoad }: ModelLoaderProps) {
                     )}
                   </div>
                 ) : (
-                  <div className="text-red-600">
-                    <AlertCircle className="h-4 w-4 inline mr-1" />
-                    {gpuInfo?.error || "Aucun GPU WebGPU compatible trouvé"}
+                  <div className="space-y-3">
+                    <div className="text-red-600">
+                      <AlertCircle className="h-4 w-4 inline mr-1" />
+                      {gpuInfo?.error || "Aucun GPU WebGPU compatible trouvé"}
+                    </div>
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                      <p className="text-xs text-green-800 dark:text-green-200 mb-2">
+                        <strong>💡 Alternative disponible :</strong> Utilisez le mode CPU avec Transformers.js. 
+                        Plus lent mais fonctionne sans GPU WebGPU.
+                      </p>
+                      <Button 
+                        onClick={handleCpuFallback} 
+                        variant="secondary" 
+                        size="sm"
+                        className="w-full"
+                      >
+                        <HardDrive className="mr-2 h-4 w-4" />
+                        Utiliser le mode CPU (WASM)
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
 
-              <Button 
-                onClick={handleLoad} 
-                className="w-full"
-                disabled={isDetecting || !recommendation?.canRun}
-              >
-                <Sparkles className="mr-2 h-4 w-4" />
-                Charger le modèle optimal
-              </Button>
+              {/* Boutons d'action */}
+              <div className="flex gap-2">
+                <Button 
+                  onClick={handleLoad} 
+                  className="flex-1"
+                  disabled={isDetecting || !recommendation?.canRun}
+                >
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  GPU (Rapide)
+                </Button>
+                <Button 
+                  onClick={handleCpuFallback} 
+                  variant="outline"
+                  className="flex-1"
+                  disabled={isDetecting}
+                >
+                  <HardDrive className="mr-2 h-4 w-4" />
+                  CPU (Lent)
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>

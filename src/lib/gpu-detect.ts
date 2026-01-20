@@ -479,7 +479,7 @@ export function getGPURecommendation(gpuInfo: GPUInfo): {
     }
     return {
       canRun: true,
-      recommendedModel: supportsF16 ? "SmolLM2-135M-Instruct-q4f16_1-MLC" : "SmolLM2-135M-Instruct-q4f32_1-MLC",
+      recommendedModel: supportsF16 ? "SmolLM2-135M-Instruct-q0f16-MLC" : "SmolLM2-135M-Instruct-q0f32-MLC",
       modelTier: "tiny",
       message: `📱 GPU Mali détecté (${gpuInfo.description}). Modèle très léger recommandé. ${f16Status}`,
       supportsF16,
@@ -490,7 +490,7 @@ export function getGPURecommendation(gpuInfo: GPUInfo): {
   if (gpuInfo.isPowerVR) {
     return {
       canRun: true,
-      recommendedModel: supportsF16 ? "SmolLM2-135M-Instruct-q4f16_1-MLC" : "SmolLM2-135M-Instruct-q4f32_1-MLC",
+      recommendedModel: supportsF16 ? "SmolLM2-135M-Instruct-q0f16-MLC" : "SmolLM2-135M-Instruct-q0f32-MLC",
       modelTier: "tiny",
       message: `📱 GPU PowerVR détecté (${gpuInfo.description}). Modèle très léger recommandé. ${f16Status}`,
       supportsF16,
@@ -510,7 +510,7 @@ export function getGPURecommendation(gpuInfo: GPUInfo): {
     }
     return {
       canRun: true,
-      recommendedModel: supportsF16 ? "SmolLM2-135M-Instruct-q4f16_1-MLC" : "SmolLM2-135M-Instruct-q4f32_1-MLC",
+      recommendedModel: supportsF16 ? "SmolLM2-135M-Instruct-q0f16-MLC" : "SmolLM2-135M-Instruct-q0f32-MLC",
       modelTier: "tiny",
       message: `💻 GPU intégré avec mémoire limitée. Modèle très léger recommandé. ${f16Status}`,
       supportsF16,

@@ -18,4 +18,11 @@ export default defineConfig({
   worker: {
     format: 'es',
   },
+  // Headers pour activer le multi-threading WASM (crossOriginIsolated)
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    },
+  },
 })

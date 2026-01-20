@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useChat } from "@/hooks/useChat";
+import { useChat, type BackendType } from "@/hooks/useChat";
 import { ChatHeader } from "./ChatHeader";
 import { MessageList } from "./MessageList";
 import { ChatInput } from "./ChatInput";
@@ -16,8 +16,8 @@ export function ChatContainer() {
     initializeModel,
   } = useChat();
 
-  const handleLoadModel = useCallback((modelId: string) => {
-    initializeModel(modelId);
+  const handleLoadModel = useCallback((modelId: string, backend: BackendType = "webllm") => {
+    initializeModel(modelId, backend);
   }, [initializeModel]);
 
   return (
